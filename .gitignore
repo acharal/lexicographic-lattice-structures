@@ -1,0 +1,8 @@
+*.o
+*.vo
+*.vio
+*.v.d
+*.glob
+*.aux
+.coq-native/
+.coqdeps.d
