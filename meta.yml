@@ -1,0 +1,18 @@
+---
+fullname: Lexicographic Lattice Structures
+shortname: lexicographic-lattices
+doi: 10.1145/3373718.3394797
+
+publications:
+- pub_doi: 10.1145/3373718.3394797
+  pub_url: https://doi.org/10.1145/3373718.3394797 
+  pub_title: A Fixed Point Theorem on Lexicographic Lattice Structures
+
+authors:
+- name: Angelos Charalambidis
+  nickname: acharal
+
+license:
+  fullname: MIT License
+  identifier: MIT
+---
