@@ -2,7 +2,7 @@
 
 let
     vscode = pkgs.vscode-with-extensions.override {
-        vscode = pkgs.vscodium;
+        vscode = pkgs.vscode;
 
         vscodeExtensions = with pkgs.vscode-extensions; [
         ]
@@ -22,8 +22,8 @@ let
         ];
     };
 
-    der = import ./default.nix { inherit pkgs; coq-version-or-url="8.12"; shell = true; };
+    der = import ./default.nix { inherit pkgs; coq-version-or-url="8.15"; shell = true; };
 
 in der.overrideAttrs (attrs: attrs // { 
-  propagatedBuildInputs = [ vscode ] ++ attrs.propagatedBuildInputs;
+  propagatedBuildInputs = attrs.propagatedBuildInputs;
 })
