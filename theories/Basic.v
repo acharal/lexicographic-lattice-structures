@@ -15,6 +15,7 @@ Typeclasses Transparent Equiv.
 Typeclasses Transparent compose flip.
 
 Instance equiv_default_relation {A} `{Equiv A} : DefaultRelation (=) | 3.
+Qed.
 
 Definition ext_equiv {A B} `{Equiv A} `{Equiv B} : Equiv (A -> B) := ((=) ==> (=))%signature.
 Hint Extern 10 (Equiv (_ -> _)) => apply @ext_equiv : typeclass_instances.

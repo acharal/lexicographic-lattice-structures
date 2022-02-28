@@ -1,10 +1,11 @@
--R . LexicographicLatticeStructures
+-I theories
+-Q theories LexicographicLatticeStructures
 
-Basic.v
-Ordinal.v
-WfOrdinal.v
-Order.v
-Fix.v
-Lattices.v
-Ord.v
-Stratified.v
+theories/Order.v
+theories/Basic.v
+theories/Lexicographic.v
+theories/Ordinal.v
+theories/Fix.v
+theories/Lattices.v
+theories/Ord.v
+theories/WfOrdinal.v
