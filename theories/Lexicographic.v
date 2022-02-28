@@ -1,8 +1,8 @@
-Require Import Basic.
-Require Import Order.
-Require Import Lattices.
-Require Import Fix.
-Require Import Ord.
+From LexLatStruct Require Import Basic.
+From LexLatStruct Require Import Order.
+From LexLatStruct Require Import Lattices.
+From LexLatStruct Require Import Fix.
+From LexLatStruct Require Import Ord.
 
 Require Import Coq.Init.Specif.
 Require Import Coq.Init.Wf.
@@ -30,8 +30,8 @@ Section Stratified.
 
   Definition zerok := exist (fun beta => beta < kappa) zero ordk_zero.
   Definition succk (alpha : ordk) := exist (fun beta => beta < kappa) (succ alpha) (ordk_succ alpha).
-  Definition limitk (f : nat -> ordk) 
-                    (h : forall x m : nat, (x < m)%nat -> (f x) < (f m)) 
+  Definition limitk (f : nat -> ordk)
+                    (h : forall x m : nat, (x < m)%nat -> (f x) < (f m))
                     (h2: limit f h < kappa) : ordk.
     exists (limit f h).
     exact h2.
@@ -57,11 +57,11 @@ Section Stratified.
   Qed.
 
   (* probably not correct *)
-  Lemma ordd_ind : 
+  Lemma ordd_ind :
     forall P : ordk -> Prop,
          P zerok ->
          (forall o : ordk, P o -> P (succk o)) ->
-         (forall f : nat -> ordk, 
+         (forall f : nat -> ordk,
             forall (h1: forall x m : nat, (x < m)%nat -> proj1_sig (f x) < proj1_sig (f m))
                    (h2: limit f h1 < kappa),
             (forall n : nat, P (f n)) -> P (limitk f h1 h2)) ->
@@ -69,11 +69,11 @@ Section Stratified.
   Admitted.
 
   (* probably not correct *)
-  Definition ordd_rect : 
+  Definition ordd_rect :
     forall P : ordk -> Type,
          P zerok ->
          (forall o : ordk, P o -> P (succk o)) ->
-         (forall f : nat -> ordk, 
+         (forall f : nat -> ordk,
             forall (h1: forall x m : nat, (x < m)%nat -> proj1_sig (f x) < proj1_sig (f m))
                    (h2: limit f h1 < kappa),
             (forall n : nat, P (f n)) -> P (limitk f h1 h2)) ->
@@ -95,11 +95,11 @@ Section Stratified.
         le_a alpha x y /\ ~ equiv_a alpha x y.
 
     (* Definition 1.4 *)
-    Definition lt_sq := 
+    Definition lt_sq :=
       fun x y => exists alpha, lt_a alpha x y.
 
     (* Definition 1.5 *)
-    Definition le_sq : Le A := 
+    Definition le_sq : Le A :=
       fun x y => lt_sq x y \/ x = y.
 
   End RelSq.
@@ -111,25 +111,25 @@ Section Stratified.
   Notation "(⊑)" := le_sq (only parsing).
 
   (* Definition 1.6 *)
-  Definition interval_a (alpha : ordk) (x : A) : A -> Prop := 
+  Definition interval_a (alpha : ordk) (x : A) : A -> Prop :=
     fun (y : A) => forall beta, beta < alpha -> equiv_a beta x y.
 
   Notation "( x ] a" := (interval_a a x) (at level 0).
 
   (* Definition 1.6 *)
-  Definition closed_interval_a (alpha : ordk) (x : A) : A ->Prop := 
+  Definition closed_interval_a (alpha : ordk) (x : A) : A ->Prop :=
   fun (y:A) => equiv_a alpha x y.
 
   Notation "[ x ] a" := (closed_interval_a a x) (at level 0).
 
-  Class StratifiedCompleteLattice (le_a : ordk -> Le A) := 
+  Class StratifiedCompleteLattice (le_a : ordk -> Le A) :=
    { le_a_preorder :> forall alpha, PreOrder (le_a alpha)
    ; eq_a_equiv    :> forall alpha, Equivalence (equiv_a alpha)
    ; le_a_eq_a_antisym : forall alpha, @AntiSymmetric A `(equiv_a alpha) (le_a alpha) (* Def 1.2 *)
    ; le_a_eq_a_proper : forall alpha, Proper ((equiv_a alpha) ==> (equiv_a alpha) ==> iff) (le_a alpha)
    ; le_a_family: forall alpha beta, alpha = beta -> forall x y, le_a alpha x y <-> le_a beta x y
 
-   ; axiom1: forall alpha beta, alpha < beta -> 
+   ; axiom1: forall alpha beta, alpha < beta ->
                 forall x y, le_a beta x y -> equiv_a alpha x y
    ; axiom2: forall x y, x = y <-> forall alpha, equiv_a alpha x y
    ; sq_lattice :> CompleteLattice (⊑) (* property 3 *)
@@ -141,21 +141,21 @@ Section Stratified.
             interval_a alpha x (lub_a alpha S) (* prop4 *)
 
    ; axiom3_lub_a: forall x, forall alpha, forall (S : A->Prop),
-          (forall z, S z ->  interval_a alpha x z) -> 
+          (forall z, S z ->  interval_a alpha x z) ->
           forall z, S z -> le_a alpha z (lub_a alpha S) (* prop4i *)
 
-   ; axiom3_lub_least_1: forall x, forall alpha, forall (S : A->Prop), 
-          (forall z, S z -> interval_a alpha x z) -> 
-          forall z, interval_a alpha x z -> 
-                 (forall y, S y -> le_a alpha y z) -> 
+   ; axiom3_lub_least_1: forall x, forall alpha, forall (S : A->Prop),
+          (forall z, S z -> interval_a alpha x z) ->
+          forall z, interval_a alpha x z ->
+                 (forall y, S y -> le_a alpha y z) ->
                   le_a alpha (lub_a alpha S) z  (* prop4ii *)
-   ; axiom3_lub_least_2: forall x, forall alpha, forall (S : A->Prop), 
-          (forall z, S z -> interval_a alpha x z) -> 
-          forall z, interval_a alpha x z -> 
-                 (forall y, S y -> le_a alpha y z) -> 
+   ; axiom3_lub_least_2: forall x, forall alpha, forall (S : A->Prop),
+          (forall z, S z -> interval_a alpha x z) ->
+          forall z, interval_a alpha x z ->
+                 (forall y, S y -> le_a alpha y z) ->
                   le_sq (lub_a alpha S) z  (* prop4ii *)
    ; prop4iii : forall x, forall alpha, forall (S : A->Prop),
-          (forall z, S z -> interval_a alpha x z) -> 
+          (forall z, S z -> interval_a alpha x z) ->
           equiv_a alpha (lub_a alpha S) (sup S)
    }.
 
@@ -188,7 +188,7 @@ Section Stratified.
   (* lemma 3.4a *)
   Lemma join_le_a_eq :
     forall x y,
-    (forall alpha, le_a alpha x y) -> 
+    (forall alpha, le_a alpha x y) ->
      x = y.
   Proof.
     intros x y x_lea_y.
@@ -321,9 +321,9 @@ Section Stratified.
 
   (* aux *)
   Lemma eq_a_le_a:
-    forall alpha, 
+    forall alpha,
     forall x y,
-      equiv_a alpha x y -> 
+      equiv_a alpha x y ->
       le_a alpha x y.
   Proof.
     intros alpha x y H.
@@ -337,7 +337,7 @@ Section Stratified.
   Lemma eq_b_eq_a:
     forall alpha beta,
       beta < alpha ->
-      forall x y, equiv_a alpha x y -> 
+      forall x y, equiv_a alpha x y ->
       equiv_a beta x y.
   Proof.
     intros alpha beta beta_le_alpha x y.
@@ -351,7 +351,7 @@ Section Stratified.
   Lemma eq_b_eq_a_2:
     forall alpha,
     forall x y,
-      equiv_a alpha x y -> 
+      equiv_a alpha x y ->
       (forall beta, beta ≤ alpha -> equiv_a beta x y).
   Proof.
     intros alpha x y x_eq_a_y.
@@ -366,7 +366,7 @@ Section Stratified.
   Lemma le_b_le_a_2:
     forall alpha,
     forall x y,
-      le_a alpha x y -> 
+      le_a alpha x y ->
       (forall beta, beta ≤ alpha -> le_a beta x y).
   Proof.
     intros alpha x y x_eq_a_y.
@@ -381,9 +381,9 @@ Section Stratified.
   Qed.
 
   Lemma le_sq_equiv_le_a:
-    forall alpha x y, 
-      x ⊑ y -> 
-      (forall gamma, gamma < alpha -> equiv_a gamma x y) -> 
+    forall alpha x y,
+      x ⊑ y ->
+      (forall gamma, gamma < alpha -> equiv_a gamma x y) ->
       le_a alpha x y.
   Proof.
     intros alpha x y H H0.
@@ -423,7 +423,7 @@ Section Stratified.
   Lemma axiom4:
     forall (S : A->Prop), forall alpha, forall y : A,
       nonempty S ->
-      (forall x, S x -> equiv_a alpha y x) -> 
+      (forall x, S x -> equiv_a alpha y x) ->
       equiv_a alpha y (sup S).
   Proof.
     intros S alpha y H H1.
@@ -467,7 +467,7 @@ Section Stratified.
   Definition glb_a (alpha : ordk) (S: A->Prop) : A :=
     sup (fun x => equiv_a alpha x (lub_a alpha (@Lower_Set _ (le_a alpha) S))).
 
-  Lemma axiom3_glb: 
+  Lemma axiom3_glb:
     forall x, forall alpha, forall (S: A->Prop),
       (forall z, S z ->  interval_a alpha x z) ->
       interval_a alpha x (glb_a alpha S).
@@ -488,7 +488,7 @@ Section Stratified.
   Admitted.
 
   Lemma axiom3_glb_a : forall x, forall alpha, forall (S : A->Prop),
-          (forall z, S z ->  interval_a alpha x z) -> 
+          (forall z, S z ->  interval_a alpha x z) ->
           forall z, S z -> le_a alpha (glb_a alpha S) z.
   Proof.
     intros.
@@ -506,11 +506,11 @@ Section Stratified.
     apply H0.
   Admitted.
 
-  Lemma axiom3_glb_least_1 : 
-    forall x, forall alpha, forall (S : A->Prop), 
-      (forall z, S z -> interval_a alpha x z) -> 
-      forall z, interval_a alpha x z -> 
-             (forall y, S y -> le_a alpha z y) -> 
+  Lemma axiom3_glb_least_1 :
+    forall x, forall alpha, forall (S : A->Prop),
+      (forall z, S z -> interval_a alpha x z) ->
+      forall z, interval_a alpha x z ->
+             (forall y, S y -> le_a alpha z y) ->
               le_a alpha z (glb_a alpha S).
   Proof.
     intros.
@@ -526,11 +526,11 @@ Section Stratified.
       intros; symmetry; assumption.
   Admitted.
 
-  Lemma axiom3_glb_least_2 : 
-    forall x, forall alpha, forall (S : A->Prop), 
-      (forall z, S z -> interval_a alpha x z) -> 
-      forall z, interval_a alpha x z -> 
-             (forall y, S y -> le_a alpha z y) -> 
+  Lemma axiom3_glb_least_2 :
+    forall x, forall alpha, forall (S : A->Prop),
+      (forall z, S z -> interval_a alpha x z) ->
+      forall z, interval_a alpha x z ->
+             (forall y, S y -> le_a alpha z y) ->
               le_sq z (glb_a alpha S).
   Proof.
     intros.
@@ -547,9 +547,9 @@ Section Stratified.
       intros. apply H2.
   Admitted.
 
-  Lemma prop4iii_glb : 
+  Lemma prop4iii_glb :
     forall x, forall alpha, forall (S : A->Prop),
-      (forall z, S z -> interval_a alpha x z) -> 
+      (forall z, S z -> interval_a alpha x z) ->
       equiv_a alpha (glb_a alpha S) (inf S).
   Proof.
     intros.
@@ -628,7 +628,7 @@ Section Stratified.
 
   (* lemma 2.3 *)
   Lemma lemma23:
-    forall x y, 
+    forall x y,
        le_sq x y -> le_a zerok x y.
   Proof.
     intros x y x_le_sq_y.
@@ -653,9 +653,9 @@ Section Stratified.
   Lemma lemma25:
     forall x, forall alpha, forall (S: A->Prop),
       (forall z, S z -> interval_a alpha x z) ->
-      forall y, forall z, 
-        S z -> 
-        le_a alpha y z -> 
+      forall y, forall z,
+        S z ->
+        le_a alpha y z ->
         le_a alpha y (lub_a alpha S).
   Proof.
     intros x alpha S H1 y z H2 H3.
@@ -713,19 +713,19 @@ Section Stratified.
     Context `{!Seq x_a}.
     Variable alpha : ordk. (* this should be less-eq to kappa *)
 
-    Hypothesis compseq1 : forall beta : ordk, 
-        beta < alpha -> 
+    Hypothesis compseq1 : forall beta : ordk,
+        beta < alpha ->
         Least (le_sq) (closed_interval_a beta (x_a beta)) (x_a beta).
 
-    Hypothesis compseq2 : forall beta gamma, 
-        beta < alpha -> 
-        gamma < alpha -> 
-        beta < gamma -> 
+    Hypothesis compseq2 : forall beta gamma,
+        beta < alpha ->
+        gamma < alpha ->
+        beta < gamma ->
         equiv_a beta (x_a beta) (x_a gamma).
 
     Lemma x_sup_sup_3:
       forall beta,
-        beta < alpha -> 
+        beta < alpha ->
         sup (fun y => exists gamma, gamma < alpha /\ y = x_a gamma) = sup (fun y => exists gamma, gamma < alpha /\ beta ≤ gamma /\ y = x_a gamma).
     Proof.
       intros beta beta_l_alpha.
@@ -822,8 +822,8 @@ Section Stratified.
      ; alpha_order_preserving : forall x y, le_a alpha x y -> le_a alpha (f x) (f y) }.
 
     Lemma aorder_preserving_equiv_alpha `{AlphaOrderPreserving} :
-      forall x y, 
-        equiv_a alpha x y -> 
+      forall x y,
+        equiv_a alpha x y ->
         equiv_a alpha (f x) (f y).
     Proof.
       intros x y H0.
@@ -856,24 +856,24 @@ Section Stratified.
       Context (alpha : ordk) (x: A).
 
       Definition fixy : wf_ord -> A :=
-        wf_ord_rect (fun _ : wf_ord => A) 
-          (x) 
-          (fun n r => f r) 
+        wf_ord_rect (fun _ : wf_ord => A)
+          (x)
+          (fun n r => f r)
           (fun h _ hr => lub_a alpha (fun y => exists n, y = (hr n))).
 
       (* must prove that the set is not empty since inf is defined only to non-empty sets *)
-      Definition lambda := inf ( 
-            fun delta : wf_ord => forall gamma, 
-              delta ≤ gamma -> 
+      Definition lambda := inf (
+            fun delta : wf_ord => forall gamma,
+              delta ≤ gamma ->
               is_limit delta ->
               equiv_a alpha (fixy delta) (fixy gamma)).
 
       Lemma lambda_is_limit : is_limit lambda.
       Admitted.
 
-      Lemma fixpy_lemma: 
+      Lemma fixpy_lemma:
         forall delta,
-          lambda ≤ delta -> 
+          lambda ≤ delta ->
           equiv_a alpha (fixy lambda) (fixy delta).
       Admitted.
 
@@ -887,7 +887,7 @@ Section Stratified.
       Qed.
 
       Lemma fixy_succ_eq :
-        forall beta, 
+        forall beta,
           fixy (succ beta) = f (fixy beta).
       Proof.
         intros.
@@ -959,7 +959,7 @@ Section Stratified.
       Qed.
 
       (* Lemma 62, Claim 1 *)
-      Lemma lemma32_1: 
+      Lemma lemma32_1:
         forall gamma, le_a alpha (fixy gamma) (f (fixy gamma)).
       Proof.
         intros.
@@ -1017,8 +1017,8 @@ Section Stratified.
       Qed.
 
       (* Lemma 62, Claim 2 *)
-      Lemma lemma32_2: 
-        forall beta gamma, 
+      Lemma lemma32_2:
+        forall beta gamma,
            beta < gamma ->
            le_a alpha (fixy beta) (fixy gamma).
       Proof.
@@ -1026,7 +1026,7 @@ Section Stratified.
         pose proof le_a_preorder.
         induction gamma using wf_ord_ind.
         - contradict H; apply ord_lt_not_zero.
-        - 
+        -
         rewrite fixy_succ_eq.
         transitivity (fixy gamma).
         case (proj1 (wf_ord_lt_eq_cases beta gamma)).
@@ -1122,7 +1122,7 @@ Section Stratified.
       Qed.
 
       Lemma lemma32_6:
-        forall z, 
+        forall z,
           le_a alpha x z ->
           le_a alpha (f z) z ->
           le_a alpha fixpy z.
@@ -1196,7 +1196,7 @@ Section Stratified.
     Instance : Setoid A := po_setoid.
 
 
-    Definition seq_as_set {alpha : ordkd} (s : ordd alpha -> A) : A -> Prop := 
+    Definition seq_as_set {alpha : ordkd} (s : ordd alpha -> A) : A -> Prop :=
       fun y => exists beta, y = s beta.
 
     Definition ordd_to_ordk_0 : forall {alpha: wf_ord}, alpha ≤ kappa -> ordd alpha -> ordk.
@@ -1213,7 +1213,7 @@ Section Stratified.
       apply (proj2_sig alpha).
     Defined.
 
-    Lemma ordk_rewrite: 
+    Lemma ordk_rewrite:
       forall (alpha : ordk),
         alpha = ordd_to_ordk alpha.
     Proof.
@@ -1231,7 +1231,7 @@ Section Stratified.
       apply hb.
     Defined.
 
-    Definition y_a (alpha : ordk) := 
+    Definition y_a (alpha : ordk) :=
        sup (seq_as_set (fun (beta : ordd alpha) => x_a (ordd_to_ordk beta))).
     (* sup (fun x => exists beta, beta < alpha /\ x = x_a beta). *)
 
@@ -1377,8 +1377,8 @@ Section Stratified.
       assumption.
     Qed.
 
-    Definition ordk_to_succ_ordd: 
-      forall alpha : ordk, 
+    Definition ordk_to_succ_ordd:
+      forall alpha : ordk,
         ordd (orddd_to_wf_ord (ordd_to_orddd (succk alpha))).
       intro.
       exists alpha.
@@ -1387,7 +1387,7 @@ Section Stratified.
 
     (* very similar to x_a_succ_case *)
     Lemma y_a_succ_case_aux:
-      forall alpha, 
+      forall alpha,
         (forall beta, beta < alpha -> le_a beta (y_a beta) (f (y_a beta))) ->
         (forall beta, beta < alpha -> equiv_a beta (x_a beta) (x_a alpha)) ->
         y_a (succk alpha) = fixpyy alpha (y_a alpha).
@@ -1425,8 +1425,8 @@ Section Stratified.
       reflexivity.
     Qed.
 
-    Lemma x_a_unfold_2_aux: 
-      forall alpha, 
+    Lemma x_a_unfold_2_aux:
+      forall alpha,
         (forall beta, beta < alpha -> le_a beta (y_a beta) (f (y_a beta))) ->
         (forall beta, beta < alpha -> equiv_a beta (x_a beta) (x_a alpha)) ->
         x_a alpha = y_a (succk alpha).
@@ -1438,7 +1438,7 @@ Section Stratified.
     Qed.
 
     Lemma x_a_succ_case_aux:
-      forall alpha, 
+      forall alpha,
         (forall beta, beta < alpha -> le_a beta (y_a beta) (f (y_a beta))) ->
         (forall beta, beta < alpha -> equiv_a beta (x_a beta) (x_a alpha)) ->
         x_a (succk alpha) = fixpyy (succk alpha) (x_a alpha).
@@ -1456,12 +1456,12 @@ Section Stratified.
     Qed.
 
     (* not in the paper *)
-    Lemma eq_a_le_b_eq_a_trans : 
+    Lemma eq_a_le_b_eq_a_trans :
       forall alpha beta,
         alpha < beta ->
-        forall x y z, 
-          equiv_a alpha x z -> 
-          le_a beta z y -> 
+        forall x y z,
+          equiv_a alpha x z ->
+          le_a beta z y ->
           equiv_a alpha x y.
     Proof.
       intros alpha beta alpha_lt_beta x y z.
@@ -1472,8 +1472,8 @@ Section Stratified.
     Qed.
 
     Lemma lemma34_0:
-      forall alpha, 
-        le_a alpha (y_a alpha) (f (y_a alpha)) /\ 
+      forall alpha,
+        le_a alpha (y_a alpha) (f (y_a alpha)) /\
         (forall beta, beta < alpha -> equiv_a beta (x_a beta) (x_a alpha)) /\
         Least (le_sq) (closed_interval_a alpha (x_a alpha)) (x_a alpha) /\
         equiv_a alpha (x_a alpha) (f (x_a alpha)).
@@ -1619,7 +1619,7 @@ Section Stratified.
 
     Lemma lemma34_1 :
       forall alpha beta,
-        beta < alpha -> 
+        beta < alpha ->
         equiv_a beta (x_a beta) (y_a alpha).
     Proof.
       intros alpha beta beta_l_limit.
@@ -1644,7 +1644,7 @@ Section Stratified.
       assumption.
     Qed.
 
-    Lemma x_a_unfold_2 : 
+    Lemma x_a_unfold_2 :
       forall alpha, x_a alpha = y_a (succk alpha).
     Proof.
       intros.
@@ -1667,8 +1667,8 @@ Section Stratified.
 
     Definition x_inf := sup (seq_as_set x_a). (* sup (fun x => exists beta : ordk, beta < kappa /\ x = x_a beta). *)
 
-    Lemma x_inf_eq_x_a : 
-      forall alpha, 
+    Lemma x_inf_eq_x_a :
+      forall alpha,
         equiv_a alpha x_inf (x_a alpha).
     Proof.
     Admitted.
@@ -1745,21 +1745,21 @@ Section Stratified.
     Qed.
 
 
-    (* this is slightly different from the original proof in the paper. 
+    (* this is slightly different from the original proof in the paper.
        uses well-founded induction and y_a_is_least lemma. *)
     Lemma lemma34_2:
-      forall alpha : ordk, 
-      forall y, 
+      forall alpha : ordk,
+      forall y,
         @PreFixedPoint A le_sq f y ->
-        (forall gamma : ordk, gamma <wf= alpha -> le_a gamma (x_a gamma) y) \/ 
+        (forall gamma : ordk, gamma <wf= alpha -> le_a gamma (x_a gamma) y) \/
         (exists gamma : ordk, (gamma < alpha) /\ lt_a gamma (x_a gamma) y).
     Proof.
       intros alpha y Ppre.
       induction alpha using well_founded_ordk_lt_ind.
       apply ord_le_le_3 in H.
       destruct H.
-        assert (forall n : ordd kappa_as_orkd, n < alpha -> 
-            (forall gamma : ordk, gamma <wf= n -> equiv_a gamma (x_a gamma) y) \/ 
+        assert (forall n : ordd kappa_as_orkd, n < alpha ->
+            (forall gamma : ordk, gamma <wf= n -> equiv_a gamma (x_a gamma) y) \/
             (exists gamma : ordk, gamma <wf= n /\ lt_a gamma (x_a gamma) y)).
           intros.
           pose proof (H n H0).

@@ -1,5 +1,5 @@
 -I theories
--Q theories LexicographicLatticeStructures
+-Q theories LexLatStruct
 
 theories/Order.v
 theories/Basic.v

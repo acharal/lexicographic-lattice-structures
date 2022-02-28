@@ -2,8 +2,8 @@
 Require Import Ensembles.
 Require Import Coq.Classes.Morphisms.
 Require Import Coq.Program.Program.
-Require Import Order.
-Require Import Fix.
+From LexLatStruct Require Import Order.
+From LexLatStruct Require Import Fix.
 
 Class Meet A := meet : A -> A -> A.
 Class Join A := join : A -> A -> A.
@@ -52,17 +52,17 @@ Definition Upper_Bound (S: Ensemble A) (d:A) : Prop :=
 Definition Lower_Bound (S: Ensemble A) (d:A) : Prop :=
  forall s, s ∈ S -> d ≤ s.
 
-Definition Upper_Set (S :  Ensemble A) : Ensemble A := 
+Definition Upper_Set (S :  Ensemble A) : Ensemble A :=
   fun d => Upper_Bound S d.
 
-Definition Lower_Set (S :  Ensemble A) : Ensemble A := 
+Definition Lower_Set (S :  Ensemble A) : Ensemble A :=
   fun d => Lower_Bound S d.
 
 End Bounds.
 
 Section CLattice.
 
-Class CompleteLattice {A: Type} `{Ae: Equiv A} (Ale: Le A) := 
+Class CompleteLattice {A: Type} `{Ae: Equiv A} (Ale: Le A) :=
   { ltord :> PartialOrder (≤)
   ; inf   : forall S : A -> Prop, A
   ; Pinf  : forall P : Ensemble A, Lower_Bound P (inf P)
@@ -85,7 +85,7 @@ Qed.
 Lemma PsupL : forall (S: A->Prop) t, Upper_Bound S t -> sup S ≤ t.
 Proof.
 intros S t Sl.
-apply Pinf. red. 
+apply Pinf. red.
 apply Sl.
 Qed.
 
@@ -179,9 +179,9 @@ Instance : CompleteLattice (@prod_leq A B lea leb).
   exists (fun (S : Ensemble (A*B)) => (inf (fun (l1:A) => exists l2, S(l1,l2)), inf (fun (l2:B) => exists l1, S(l1,l2)))).
   apply prod_is_partialorder; apply ltord.
 unfold Lower_Bound. unfold le. unfold prod_leq. simpl. intros P s Ps.
-  split. apply Pinf. reduce. exists (snd s). 
+  split. apply Pinf. reduce. exists (snd s).
   assert (ss:= surjective_pairing). rewrite <- ss. apply Ps.
-  apply Pinf. reduce. exists (fst s). 
+  apply Pinf. reduce. exists (fst s).
   assert (ss:= surjective_pairing). rewrite <- ss. apply Ps.
 unfold Lower_Bound. unfold le. unfold prod_leq. simpl. intros P s Ps.
 split. apply PinfL. unfold Lower_Bound. intros. reduce in H1. case H1. intros.
@@ -293,7 +293,7 @@ Proof.
 unfold FixedPoint.
 apply po_antisym.
 - apply lfp_is_PreFixedPoint.
-- assert (Hfx: PreFixedPoint f (f lfp)). {  
+- assert (Hfx: PreFixedPoint f (f lfp)). {
     unfold PreFixedPoint. apply OrderPreserving0. apply lfp_is_PreFixedPoint. }
   apply lfp_least. apply Hfx.
 Qed.
@@ -302,7 +302,7 @@ Lemma gfp_fixedpoint : FixedPoint f gfp.
 Proof.
 unfold FixedPoint.
 apply po_antisym.
-- assert (Hfx: PostFixedPoint f (f gfp)). {  
+- assert (Hfx: PostFixedPoint f (f gfp)). {
     unfold PostFixedPoint. apply OrderPreserving0. apply gfp_is_PostFixedPoint. }
   apply gfp_greatest. apply Hfx.
 - apply gfp_is_PostFixedPoint.
@@ -316,14 +316,14 @@ Section OrderPreservingLattice.
 Context {A B : Type} `{PartialOrder A} `{Equiv B} (leq : Le B) `{!CompleteLattice leq}.
 
 Lemma inf_is_order_preserving : forall (S : Ensemble (A->B)), (forall t : A->B, S t -> OrderPreserving t) -> OrderPreserving (inf (Ale:=arrow_leq) S).
-intros S l. 
-assert (Hhh : forall (x:A) (f : A->B), S f -> (f x) ∈ (fun x0 : B => exists g : A->B, S g /\ g x = x0)). { 
+intros S l.
+assert (Hhh : forall (x:A) (f : A->B), S f -> (f x) ∈ (fun x0 : B => exists g : A->B, S g /\ g x = x0)). {
     intros. exists f. split. assumption. destruct CompleteLattice0. destruct ltord0. reflexivity. }
 split.
 - split.
  + assumption.
  + destruct CompleteLattice0. assumption.
- + 
+ +
   split.
     * destruct H0. apply po_setoid.
     * destruct CompleteLattice0. destruct ltord0. apply po_setoid.
@@ -331,18 +331,18 @@ split.
       assert (forall f : A -> B, S f -> f x = f y). {
         intro. intro.  apply l in H3. destruct CompleteLattice0. destruct ltord0. rewrite H2. reflexivity. }
       assert (forall x y, x ≤ y /\ y ≤ x <-> x = y). {
-        intros. split. intro. destruct H4. destruct CompleteLattice0. destruct ltord0. 
+        intros. split. intro. destruct H4. destruct CompleteLattice0. destruct ltord0.
         apply po_antisym. assumption. assumption.
         intro.  destruct CompleteLattice0. destruct ltord0. split. rewrite H4.  reflexivity. rewrite H4. reflexivity. }
       apply H4. split.
       destruct CompleteLattice0. unfold inf. unfold arrow_is_clattice. reduce.
       { apply PinfL0. intro. intro. reduce in H5. case H5. intros. destruct H6. apply Pinf0. reduce. exists x0. destruct ltord0. rewrite <- H7. split.
         assumption. apply H3. apply H6. }
-            destruct CompleteLattice0. 
+            destruct CompleteLattice0.
       { apply PinfL0. intro. intro. reduce in H5. case H5. intros. destruct H6. apply Pinf0. reduce. exists x0. destruct ltord0. rewrite <- H7. split.
         assumption. symmetry. apply H3. apply H6. }
 - intros. unfold inf. unfold arrow_is_clattice. unfold contains. unfold flip. reduce.
-  destruct CompleteLattice0. 
+  destruct CompleteLattice0.
   assert (mon: forall f : A->B, S f -> f x ≤ f y). { intros. apply l. assumption. assumption. }
 
   apply PinfL0. unfold Lower_Bound. intros.  reduce in H3. case H3. intro. intro. destruct H4. assert (Hc : S x0). { assumption. }

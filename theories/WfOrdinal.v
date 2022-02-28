@@ -12,7 +12,7 @@
    to be monotone. *)
 
 
-Require Export Ordinal.
+From LexLatStruct Require Export Ordinal.
 
 
 Set Implicit Arguments.
@@ -106,9 +106,9 @@ apply H0.
 apply H0.
 Qed.
 
-Lemma wf_ord_lt_limit_is_bound : 
-  forall (f: nat->ord) (n : nat), 
-      wf (Limit f) -> 
+Lemma wf_ord_lt_limit_is_bound :
+  forall (f: nat->ord) (n : nat),
+      wf (Limit f) ->
       f n < Limit f.
 Proof.
 intros f n H.
@@ -118,19 +118,19 @@ auto.
 Qed.
 
 
-Lemma wf_ord_wf_succ_implies_wf : 
+Lemma wf_ord_wf_succ_implies_wf :
     forall w, wf (Succ w) -> wf w.
-Proof. 
+Proof.
   intros. induction w ; trivial.
 Qed.
 
-Lemma wf_ord_wf_limit_implies_wf : 
-    forall f, wf (Limit f) -> 
+Lemma wf_ord_wf_limit_implies_wf :
+    forall f, wf (Limit f) ->
     forall n : nat, wf (f n).
 Proof.
   intros f Hwf n.
   destruct Hwf as [Hwf _].
-  specialize Hwf with (n). 
+  specialize Hwf with (n).
   exact Hwf.
 Qed.
 
@@ -225,15 +225,15 @@ Proof.
   cut (forall (n a : wf_ord), wf_ord_lt a n -> Acc wf_ord_lt a).
   intros H1 a.  refine (H1 (succ a) _ _). unfold wf_ord_lt. simpl. exists (inl tt). apply ord_le_refl.
   intro n. destruct n. induction x.
-  intros. absurd (a <wf exist wf Zero w). intro.  destruct H. revert H. 
+  intros. absurd (a <wf exist wf Zero w). intro.  destruct H. revert H.
   apply ord_le_not_pd_right. apply Ord_le_Zero. assumption.
   intros. apply Acc_intro.
   unfold wf_ord in |- *. intros b H1. apply IHx with (w:=wf_ord_wf_succ_implies_wf x w).
-  unfold wf_ord_lt. simpl. 
+  unfold wf_ord_lt. simpl.
   apply ord_lt_le_trans with (beta:=a). apply H1.
   destruct H. apply ord_le_succ_pd_right in H. apply H.
   intros. apply Acc_intro.
-  unfold wf_ord_lt in |- *. intros b H2. 
+  unfold wf_ord_lt in |- *. intros b H2.
   destruct H0. destruct x.
   refine (H x (wf_ord_wf_limit_implies_wf w x) _ _).
   apply ord_lt_le_trans with (beta:=a).
@@ -345,11 +345,11 @@ assumption.
 Qed.
 
 
-Lemma wf_ord_ind : 
+Lemma wf_ord_ind :
   forall P : wf_ord -> Prop,
        P zero ->
        (forall o : wf_ord, P o -> P (succ o)) ->
-       (forall f : nat -> wf_ord, 
+       (forall f : nat -> wf_ord,
           forall h: (forall x m : nat, (x < m)%nat -> proj1_sig (f x) < proj1_sig (f m)),
           (forall n : nat, P (f n)) -> P (limit f h)) ->
        forall o : wf_ord, P o.
@@ -372,11 +372,11 @@ Proof.
   apply H2.
 Defined.
 
-Definition wf_ord_rect : 
+Definition wf_ord_rect :
   forall P : wf_ord -> Type,
        P zero ->
        (forall o : wf_ord, P o -> P (succ o)) ->
-       (forall f : nat -> wf_ord, 
+       (forall f : nat -> wf_ord,
           forall h: (forall x m : nat, (x < m)%nat -> proj1_sig (f x) < proj1_sig (f m)),
           (forall n : nat, P (f n)) -> P (limit f h)) ->
        forall o : wf_ord, P o.
@@ -397,7 +397,7 @@ Definition wf_ord_rec :
   forall P : wf_ord -> Set,
      P zero ->
      (forall o : wf_ord, P o -> P (succ o)) ->
-     (forall f : nat -> wf_ord, 
+     (forall f : nat -> wf_ord,
         forall h: (forall x m : nat, (x < m)%nat -> proj1_sig (f x) < proj1_sig (f m)),
         (forall n : nat, P (f n)) -> P (limit f h)) ->
      forall o : wf_ord, P o.
@@ -429,7 +429,7 @@ Qed.
 
 Lemma ord_le_le_3 :
   forall (A:Type) (P R Q : A->Prop),
-    (forall n, P(n) -> R(n) \/ Q(n)) -> 
+    (forall n, P(n) -> R(n) \/ Q(n)) ->
     (forall n, P(n) -> R(n)) \/ exists n, (P(n) /\ Q(n)).
 Proof.
   intros.
@@ -451,9 +451,9 @@ Proof.
    split; assumption.
 Qed.
 
-Lemma pd_is_wf: 
-    forall (o : ord) (i: pd_type o), 
-    wf o -> wf (pd o i). 
+Lemma pd_is_wf:
+    forall (o : ord) (i: pd_type o),
+    wf o -> wf (pd o i).
 Proof.
   intros.
   induction o.
@@ -485,9 +485,9 @@ Defined.
 Require Import Coq.Logic.Classical_Pred_Type.
 
 
-Lemma wf_ord_lt_eq_cases: 
-  forall x y, 
-    x <wf= y <-> 
+Lemma wf_ord_lt_eq_cases:
+  forall x y,
+    x <wf= y <->
     x <wf y \/ x =wf= y.
 Proof.
 intros x y.
@@ -515,12 +515,12 @@ intros x y.
     + induction y using wf_ord_ind.
       ++ (* y = zero *) destruct i.
       ++ (* y = succ *) induction i.
-          +++ (* immediate predecessor, if x = pred y then should be equal succ x = y *) 
-              right; constructor; 
-              apply ord_le_succ_intro; 
-              destruct a; 
+          +++ (* immediate predecessor, if x = pred y then should be equal succ x = y *)
+              right; constructor;
+              apply ord_le_succ_intro;
+              destruct a;
               apply H.
-          +++ (* not immediate *) 
+          +++ (* not immediate *)
               left; destruct (IHy b H0 H).
               apply ord_lt_trans with y. assumption. apply ord_lt_succ_alpha.
               destruct H1. apply ord_le_lt_trans with y. apply H1. apply ord_lt_succ_alpha.
@@ -603,9 +603,9 @@ Proof.
   intros n m. destruct (wf_ord_le_gt_cases n m); intuition.
 Qed.
 
-Lemma wf_ord_lt_trichotomy : forall n m, 
-    n <wf m \/ 
-    n =wf= m \/ 
+Lemma wf_ord_lt_trichotomy : forall n m,
+    n <wf m \/
+    n =wf= m \/
     m <wf n.
 Proof.
   intros n m.

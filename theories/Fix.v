@@ -1,6 +1,7 @@
-Require Import Basic.
-Require Import Order.
-Require Import WfOrdinal.
+From LexLatStruct Require Import Basic.
+From LexLatStruct Require Import Order.
+From LexLatStruct Require Import WfOrdinal.
+
 Require Import Arith.
 
 
@@ -17,7 +18,7 @@ Class Expansive {A} `{Le A} (f:A->A) :=
 
 Section ContinuousFixpoint.
 
-  Context {A} `{Equiv A} {leq : Le A} `{!CompletePartialOrder leq} `{!Pointed leq} 
+  Context {A} `{Equiv A} {leq : Le A} `{!CompletePartialOrder leq} `{!Pointed leq}
           (f: A-m>A) `{!LimitPreserving f}.
 
   Fixpoint iter_ (n : nat) : A :=
@@ -28,7 +29,7 @@ Section ContinuousFixpoint.
 
   Instance : Setoid A := po_setoid.
 
-  Lemma iter_is_expanding : 
+  Lemma iter_is_expanding :
       forall n, iter_ n ≤ f (iter_ n).
   Proof.
     induction n.
@@ -42,8 +43,8 @@ Section ContinuousFixpoint.
   Lemma iter_is_preserving : OrderPreserving iter_.
   Proof.
     split.
-      - split. 
-        apply PartialOrder_instance_0. 
+      - split.
+        apply PartialOrder_instance_0.
         apply CompletePartialOrder0.
         split.
         apply po_setoid.
@@ -80,7 +81,7 @@ Section ContinuousFixpoint.
     unfold PreFixedPoint.
     unfold lfp.
     transitivity (lub (fmon_comp f iter)).
-    - rewrite limit_preserving. 
+    - rewrite limit_preserving.
       reflexivity. assumption.
     - rewrite (lub_lift_left iter (S 0)).
       unfold seq_lift_left. simpl.
@@ -96,8 +97,8 @@ Section ContinuousFixpoint.
     apply lfp_is_postfixedpoint.
   Qed.
 
-  Lemma lfp_is_least_prefixedpoint : 
-    forall g, 
+  Lemma lfp_is_least_prefixedpoint :
+    forall g,
       PreFixedPoint f g ->
       lfp ≤ g.
   Proof.
@@ -132,7 +133,7 @@ Section OrdinalOrder.
   Proof.
     split.
      - unfold Reflexive. unfold wf_ord_le. intros. apply ord_le_refl.
-     - unfold Transitive. intros. unfold wf_ord_le in *. 
+     - unfold Transitive. intros. unfold wf_ord_le in *.
        apply ord_le_trans with (proj1_sig y) ; assumption.
   Qed.
 
@@ -154,7 +155,7 @@ Section OrdinalOrder.
 
 End OrdinalOrder.
 
-Lemma mon_lt_implies_mon_le : forall f : nat -> ord, 
+Lemma mon_lt_implies_mon_le : forall f : nat -> ord,
   (forall n m, (n < m)%nat -> (f n < f m)%ord) ->
   (forall n m, (n <= m)%nat -> (f n <= f m)%ord).
 Proof.
@@ -167,7 +168,7 @@ Qed.
 (*
 Section Fixpoints.
 
-Context {A} `{Equiv A} `{le : Le A} `{!Pointed le} 
+Context {A} `{Equiv A} `{le : Le A} `{!Pointed le}
        `{!CompletePartialOrder le}.
 
 Variable f : A -m> A.
@@ -181,7 +182,7 @@ Program Fixpoint iter (n : wf_ord) {wf wf_ord_lt n} : A :=
 
 (* m is wellformed ordinal *)
 Next Obligation.
-apply wf_ord_wf_succ_implies_wf. 
+apply wf_ord_wf_succ_implies_wf.
 destruct n.
 rewrite Heq_n.
 trivial.
@@ -223,15 +224,15 @@ admit.
 Admitted.
 
 Lemma le_word_le_ord :
-  forall x y : wf_ord, 
-    (x <= y)%ord -> 
+  forall x y : wf_ord,
+    (x <= y)%ord ->
     (proj1_sig x <= proj1_sig y)%ord.
 Admitted.
 
 Lemma iter_incr : forall n, iter n ≤ f (iter n).
 Proof.
 intro n. destruct n as [n Hwfn].
-induction n. 
+induction n.
 - unfold iter; rewrite WfExtensionality.fix_sub_eq_ext ; simpl ; fold iter. apply Pbot.
 - unfold iter; rewrite WfExtensionality.fix_sub_eq_ext; simpl; fold iter. destruct f. apply o . apply IHn.
 - unfold iter; rewrite WfExtensionality.fix_sub_eq_ext; simpl; fold iter.

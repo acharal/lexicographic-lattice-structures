@@ -1,7 +1,7 @@
 Require Export Coq.Relations.Relations.
 Require Export Coq.Classes.RelationClasses.
 Require Import Coq.Program.Program.
-Require Export Basic.
+From LexLatStruct Require Export Basic.
 Require Import Arith.
 Require Import Coq.Arith.PeanoNat.
 
@@ -14,8 +14,8 @@ Class PartialOrder {A} `{Equiv A} (Ale : Le A) : Prop :=
 
 
 Lemma eq_implies_leq {A} `{Po : PartialOrder A} :
-  forall x y, 
-    x = y -> 
+  forall x y,
+    x = y ->
     x ≤ y /\ y ≤ x.
 Proof.
   intros x y C.
@@ -43,9 +43,9 @@ Section DualOrd.
   Proof.
     pose proof po_setoid.
     split.
-      assumption. 
+      assumption.
       unfold le, flip.
-        reduce. 
+        reduce.
         rewrite <- H2; rewrite <- H3; tauto.
       apply geq_is_preo.
       intros x y x_le_y y_le_x.
@@ -84,7 +84,7 @@ Section SubOrd.
   Instance subord_is_preorder (leq : Le A) `{!PreOrder leq} : PreOrder (sub_leq leq).
   Proof.
   split.
-  - reduce. destruct PreOrder0. unfold Reflexive in PreOrder_Reflexive. apply PreOrder_Reflexive. 
+  - reduce. destruct PreOrder0. unfold Reflexive in PreOrder_Reflexive. apply PreOrder_Reflexive.
   - unfold sub_leq. reduce. destruct PreOrder0. apply transitivity with (y0:=proj1_sig y).
     + apply H.
     + apply H0.
@@ -112,7 +112,7 @@ Section ArrowOrd.
   Global Instance arrow_equiv `{Equiv B} : Equiv (A->B) :=
     fun (f g : A->B) => forall x, f x = g x.
 
-  Definition arrow_leq `{Le B} : Le (A->B) := 
+  Definition arrow_leq `{Le B} : Le (A->B) :=
     fun (f g : A->B) => forall x, f(x) ≤ g(x).
 
   Global Instance arrow_leq_inst `{Le B} : Le (A->B) := arrow_leq.
@@ -149,7 +149,7 @@ Section ArrowOrd.
   - apply arrow_is_setoid.
   - reduce. unfold le. unfold arrow_leq. unfold equiv in H0. unfold arrow_equiv in H0.
     unfold equiv in H1. unfold arrow_equiv in H1.
-    split. 
+    split.
     + intro. intro w. rewrite <- H1. rewrite <- H0. apply H2.
     + intro. intro w. rewrite -> H1. rewrite -> H0. apply H2.
   - apply arrow_is_preorder.
@@ -164,9 +164,9 @@ End ArrowOrd.
 
 Section order_maps.
 
-  Context {A B : Type} 
-          {Ae: Equiv A} {Ale: Le A} 
-          {Be: Equiv B} {Ble: Le B} 
+  Context {A B : Type}
+          {Ae: Equiv A} {Ale: Le A}
+          {Be: Equiv B} {Ble: Le B}
           (f : A -> B).
 
   Class OrderMorphism :=
@@ -174,7 +174,7 @@ Section order_maps.
     ; order_po_b : PartialOrder Ble
     ; ordermor :> SetoidMorphism f }.
 
-  Class OrderPreserving := 
+  Class OrderPreserving :=
     { order_preserving_mor :> OrderMorphism
     ; order_preserving : forall x y, x ≤ y -> f x ≤ f y }.
 
@@ -199,24 +199,24 @@ End order_maps.
 Hint Extern 4 (?f _ ≤ ?f _) => apply (order_preserving f).
 
 Lemma compose_is_order_morphism {A B C}
-  `{poA: PartialOrder A} `{poB : PartialOrder B} `{poC: PartialOrder C}: 
-  forall (f: B->C) (g: A->B), 
-    OrderMorphism f -> 
-    OrderMorphism g -> 
+  `{poA: PartialOrder A} `{poB : PartialOrder B} `{poC: PartialOrder C}:
+  forall (f: B->C) (g: A->B),
+    OrderMorphism f ->
+    OrderMorphism g ->
     OrderMorphism (compose f g).
 Proof.
 intros f g fop gop.
 split. assumption. assumption.
   split. apply po_setoid. apply po_setoid.
-  reduce. destruct poA. destruct poB. destruct poC. destruct fop. destruct gop. 
+  reduce. destruct poA. destruct poB. destruct poC. destruct fop. destruct gop.
   rewrite H2. reflexivity.
 Qed.
 
-Lemma compose_preserving_is_preserving {A B C} 
-  `{poA: PartialOrder A} `{poB : PartialOrder B} `{poC: PartialOrder C}: 
-  forall (f: B->C) (g: A->B), 
-    OrderPreserving f -> 
-    OrderPreserving g -> 
+Lemma compose_preserving_is_preserving {A B C}
+  `{poA: PartialOrder A} `{poB : PartialOrder B} `{poC: PartialOrder C}:
+  forall (f: B->C) (g: A->B),
+    OrderPreserving f ->
+    OrderPreserving g ->
     OrderPreserving (compose f g).
 Proof.
 intros f g f_op g_op. split.
@@ -225,11 +225,11 @@ intros f g f_op g_op. split.
   apply order_preserving. apply g_op. apply x_le_y.
 Qed.
 
-Lemma compose_reversing_is_preserving {A B C} 
-  `{poA: PartialOrder A} `{poB : PartialOrder B} `{poC: PartialOrder C}: 
-  forall (f: B->C) (g: A->B), 
-    OrderReversing f -> 
-    OrderReversing g -> 
+Lemma compose_reversing_is_preserving {A B C}
+  `{poA: PartialOrder A} `{poB : PartialOrder B} `{poC: PartialOrder C}:
+  forall (f: B->C) (g: A->B),
+    OrderReversing f ->
+    OrderReversing g ->
     OrderPreserving (compose f g).
 Proof.
 intros f g f_or g_or. split.
@@ -238,19 +238,19 @@ intros f g f_or g_or. split.
   apply order_reversing. apply g_or. apply x_le_y.
 Qed.
 
-Definition fmon (A B : Type) `{PartialOrder A} `{PartialOrder B} := 
-    { f : A->B | OrderPreserving f}. 
+Definition fmon (A B : Type) `{PartialOrder A} `{PartialOrder B} :=
+    { f : A->B | OrderPreserving f}.
 
 Infix "-m>" := fmon (at level 30, right associativity).
 
-Definition fmon_as_fun {A} {B} 
+Definition fmon_as_fun {A} {B}
   `{PartialOrder A} `{PartialOrder B} (f : A -m> B) : A -> B := proj1_sig f.
 
 Coercion fmon_as_fun : fmon >-> Funclass.
 
 (* Composition of monotone functions is monotone *)
-Definition fmon_comp {O1 O2 O3 : Type} 
-  `{PartialOrder O1} `{PartialOrder O2} `{PartialOrder O3} : 
+Definition fmon_comp {O1 O2 O3 : Type}
+  `{PartialOrder O1} `{PartialOrder O2} `{PartialOrder O3} :
     (O2 -m> O3) -> (O1 -m> O2) -> O1 -m> O3.
 intros f g; exists (compose f g).
 apply compose_preserving_is_preserving. apply (proj2_sig f). apply (proj2_sig g).
@@ -265,7 +265,7 @@ Section ProdOrd.
 
   Context {A B : Type}.
 
-  Global Instance prod_equiv `{Equiv A} `{Equiv B} : Equiv (A*B) := { 
+  Global Instance prod_equiv `{Equiv A} `{Equiv B} : Equiv (A*B) := {
      equiv (x y : A*B) := (fst x) = (fst y) /\ (snd x) = (snd y) }.
 
   Global Instance prod_leq `{Le A} `{Le B} : Le (A*B) := {
@@ -275,7 +275,7 @@ Section ProdOrd.
   Proof.
   split.
   - unfold Reflexive. unfold prod_leq. intro x. split. reflexivity. reflexivity.
-  - unfold Transitive. intros x y z. unfold prod_leq. intros [HFstxy HSndxy]. intros [HFstyz HSndyz]. 
+  - unfold Transitive. intros x y z. unfold prod_leq. intros [HFstxy HSndxy]. intros [HFstyz HSndyz].
     split. transitivity (fst y). assumption. assumption. transitivity (snd y). assumption. assumption.
   Qed.
 
@@ -290,7 +290,7 @@ Section ProdOrd.
       assumption. assumption.
   Qed.
 
-  Global Instance prod_is_partialorder `{Equiv A} (lea : Le A) `{!PartialOrder lea} 
+  Global Instance prod_is_partialorder `{Equiv A} (lea : Le A) `{!PartialOrder lea}
              `{Equiv B} (leb : Le B) `{!PartialOrder leb} : PartialOrder (@prod_leq lea leb).
   Proof.
   split.
@@ -301,8 +301,8 @@ Section ProdOrd.
     - apply prod_is_preorder.
     - unfold AntiSymmetric. unfold le. unfold prod_leq. unfold equiv. unfold prod_equiv.
       intros x y. intros [HFxy HSxy] [HFyx HSyx]. destruct PartialOrder0. destruct PartialOrder1.
-      split. 
-        apply po_antisym0. assumption. assumption. 
+      split.
+        apply po_antisym0. assumption. assumption.
         apply po_antisym1. assumption. assumption.
   Qed.
 
@@ -323,23 +323,23 @@ Admitted.
 
 Close Scope nat.
 
-Class CompletePartialOrder {A} `{Equiv A} (Ale : Le A) := { 
+Class CompletePartialOrder {A} `{Equiv A} (Ale : Le A) := {
     cpo_po :> PartialOrder (≤)
   ; lub : forall (F : nat-m>A), A
   ; cpo_lub_le: forall (F : nat-m>A) (n : nat), F n ≤ lub F
   ; cpo_le_lub: forall (F : nat-m>A) (x : A), (forall n, F n ≤ x) -> lub F ≤ x }.
 
-Lemma lub_le_order_preserving {A} {B} 
-  `{CompletePartialOrder A} 
-  `{CompletePartialOrder B} : 
-  forall (f:A-m>B) (s : nat -m>A), 
+Lemma lub_le_order_preserving {A} {B}
+  `{CompletePartialOrder A}
+  `{CompletePartialOrder B} :
+  forall (f:A-m>B) (s : nat -m>A),
     lub (fmon_comp f s) ≤ f (lub s).
 Proof.
   intros f s.
   apply cpo_le_lub.
   intros.
-  unfold fmon_comp. unfold compose. simpl. 
-  apply order_preserving. 
+  unfold fmon_comp. unfold compose. simpl.
+  apply order_preserving.
   apply (proj2_sig f).
   apply cpo_lub_le.
 Qed.
@@ -377,7 +377,7 @@ Section ArrowCPO.
     unfold le.
     unfold arrow_leq.
     intro x.
-    assert (F n x = funseq F x n). 
+    assert (F n x = funseq F x n).
     { unfold funseq. simpl. reflexivity. }
     rewrite H0.
     apply cpo_lub_le.
@@ -459,9 +459,9 @@ Section FmonCPO.
   Context {A B} `{Equiv A} `{lea : Le A} `{!CompletePartialOrder lea}
           `{Equiv B} `{leb : Le B} `{!CompletePartialOrder leb}.
 
-Lemma lub_is_op : 
-  forall (S : nat-m>(A->B)), 
-    (forall n, OrderPreserving (S n)) -> 
+Lemma lub_is_op :
+  forall (S : nat-m>(A->B)),
+    (forall n, OrderPreserving (S n)) ->
     OrderPreserving (lub S).
 Proof.
   intros S H1.
@@ -520,9 +520,9 @@ Proof.
   apply x_le_y.
   unfold lubF.
   assert (S n y = (funseq S y) n).
-  { unfold funseq. simpl. 
-    destruct CompletePartialOrder1. 
-    destruct cpo_po0. 
+  { unfold funseq. simpl.
+    destruct CompletePartialOrder1.
+    destruct cpo_po0.
     reflexivity. }
   destruct CompletePartialOrder1.
   destruct cpo_po0.
@@ -542,7 +542,7 @@ Section LubLemmas.
 
 Lemma lub_le_compat :
   forall (f g : nat-m>A),
-    f ≤ g -> 
+    f ≤ g ->
     lub f ≤ lub g.
 Proof.
   intros.
@@ -553,7 +553,7 @@ Proof.
   apply cpo_lub_le.
 Qed.
 
-Definition seq_lift_left : 
+Definition seq_lift_left :
     forall (f : nat-m>A) (n:nat), nat-m>A.
 intros.
 exists (fun k => f (n+k)%nat).
@@ -563,15 +563,15 @@ split.
   reduce. destruct f. destruct o. destruct order_preserving_mor0.
   destruct H0. destruct cpo_po0. destruct ordermor0. simpl.
   rewrite H1. reflexivity.
-- intros x y x_le_y. 
+- intros x y x_le_y.
   apply order_preserving.
   apply (proj2_sig f).
   unfold le. unfold Le_instance_0. unfold le_nat.
   auto with arith.
 Defined.
 
-Lemma lub_lift_left : 
-  forall (f : nat-m>A) (n:nat), 
+Lemma lub_lift_left :
+  forall (f : nat-m>A) (n:nat),
     lub f = lub (seq_lift_left f n).
 Proof.
 intros.
@@ -604,17 +604,17 @@ End LubLemmas.
 
 Global Instance lub_eq_wd {A} `{CompletePartialOrder A} : Proper (equiv ==> equiv) lub.
 Proof.
-reduce. 
+reduce.
 apply po_antisym.
-- destruct H0. destruct cpo_po0. apply lub_le_compat. 
-  unfold le. unfold sub_leq_inst. unfold sub_leq. 
+- destruct H0. destruct cpo_po0. apply lub_le_compat.
+  unfold le. unfold sub_leq_inst. unfold sub_leq.
   unfold sig_le. unfold le. unfold arrow_leq_inst. unfold arrow_leq.
-  intro. unfold equiv in H1. unfold sub_equiv in H1. unfold sig_equiv in H1. 
+  intro. unfold equiv in H1. unfold sub_equiv in H1. unfold sig_equiv in H1.
   unfold equiv in H1. unfold arrow_equiv in H1. rewrite H1. reflexivity.
-- destruct H0. destruct cpo_po0. apply lub_le_compat. 
-  unfold le. unfold sub_leq_inst. unfold sub_leq. 
+- destruct H0. destruct cpo_po0. apply lub_le_compat.
+  unfold le. unfold sub_leq_inst. unfold sub_leq.
   unfold sig_le. unfold le. unfold arrow_leq_inst. unfold arrow_leq.
-  intro. unfold equiv in H1. unfold sub_equiv in H1. unfold sig_equiv in H1. 
+  intro. unfold equiv in H1. unfold sub_equiv in H1. unfold sig_equiv in H1.
   unfold equiv in H1. unfold arrow_equiv in H1. rewrite H1. reflexivity.
 Qed.
 
@@ -622,7 +622,7 @@ Section continuous_maps.
 
 Context {A B} `{CompletePartialOrder A} `{CompletePartialOrder B} (f: A-m>B).
 
-Class LimitPreserving := 
+Class LimitPreserving :=
   { limit_preserving: forall (s:nat-m>A), lub (fmon_comp f s) = f (lub s) }.
 
 End continuous_maps.
@@ -641,7 +641,7 @@ unfold compose.
 simpl.
 destruct H0. destruct H2. destruct H4.
 destruct cpo_po0. destruct cpo_po1. destruct cpo_po2.
-assert (SetoidMorphism f). { apply (proj2_sig f). } 
+assert (SetoidMorphism f). { apply (proj2_sig f). }
 rewrite <- limit_preserving.
 rewrite <- limit_preserving.
 assert (fmon_comp (fmon_comp f g) s = fmon_comp f (fmon_comp g s)). {

@@ -1,7 +1,7 @@
-Require Import Basic.
-Require Import Order.
-Require Import Lattices.
-Require Export WfOrdinal.
+From LexLatStruct Require Import Basic.
+From LexLatStruct Require Import Order.
+From LexLatStruct Require Import Lattices.
+From LexLatStruct Require Export WfOrdinal.
 
 Open Scope wf_ord_scope.
 
@@ -138,17 +138,17 @@ Instance ordd_le_: forall alpha, Le (ordd alpha) := ordd_le.
 Instance ordd_lt_: forall alpha, Lt (ordd alpha) := ordd_lt.
 
 Instance ordd_eq_wd:
-  forall alpha, 
+  forall alpha,
     Equivalence (ordd_eq alpha).
 Admitted.
 
 Instance ordd_lt_wd:
-  forall alpha, 
+  forall alpha,
     Proper ((ordd_eq alpha)==>(ordd_eq alpha)==>iff) (ordd_le alpha).
 Admitted.
 
 Instance ordd_le_wd:
-  forall alpha, 
+  forall alpha,
     Proper ((ordd_eq alpha)==>(ordd_eq alpha)==>iff) (ordd_le alpha).
 Admitted.
 
@@ -207,7 +207,7 @@ Definition ordkd_to_ordk {kappa} (alpha : orddd kappa) (alpha_lt_kappa : alpha <
   exact alpha_lt_kappa.
 Defined.
 
-Lemma ordk_rewrite: 
+Lemma ordk_rewrite:
   forall {kappa} (alpha : ordd (as_orddd kappa)),
     alpha = ordd_to_ordk alpha.
 Proof.
@@ -219,7 +219,7 @@ Require Import Coq.Logic.Classical_Prop.      (* classic *)
 (* move elsewhere *)
 Lemma ord_le_le_3:
   forall (A:Type) (P R Q : A->Prop),
-    (forall n, P(n) -> R(n) \/ Q(n)) -> 
+    (forall n, P(n) -> R(n) \/ Q(n)) ->
     (forall n, P(n) -> R(n)) \/ (exists n, P(n) /\ Q(n)).
 Proof.
   intros.
