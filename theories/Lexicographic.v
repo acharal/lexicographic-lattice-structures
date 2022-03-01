@@ -1,8 +1,8 @@
 From LexLatStruct Require Import Basic.
-From LexLatStruct Require Import Order.
-From LexLatStruct Require Import Lattices.
-From LexLatStruct Require Import Fix.
-From LexLatStruct Require Import Ord.
+From LexLatStruct.Order Require Import Ordinal.
+From LexLatStruct.Order Require Import PartialOrder.
+From LexLatStruct.Order Require Import Lattice.
+Require Import LexLatStruct.Order.Fixpoint.
 
 Require Import Coq.Init.Specif.
 Require Import Coq.Init.Wf.
@@ -978,7 +978,7 @@ Section Stratified.
           rewrite fixy_succ_eq.
           apply IHgamma.
         - rewrite fixy_limit_eq at 1.
-          apply axiom3_lub_least_1 with (x0:=x).
+          apply axiom3_lub_least_1 with (x:=x).
           intros z H2.
           unfold interval_a.
           intros.
@@ -1004,7 +1004,7 @@ Section Stratified.
           apply alpha_order_preserving.
           assumption.
           rewrite fixy_limit_eq.
-          apply axiom3_lub_a with (x1:=x).
+          apply axiom3_lub_a with (x:=x).
           intros.
           unfold interval_a.
           intros.

@@ -1,6 +1,6 @@
 From LexLatStruct Require Import Basic.
-From LexLatStruct Require Import Order.
-From LexLatStruct Require Import Lattices.
+From LexLatStruct.Order Require Import PartialOrder.
+From LexLatStruct.Order Require Import Lattice.
 From LexLatStruct Require Export WfOrdinal.
 
 Open Scope wf_ord_scope.

@@ -1,11 +1,33 @@
 -I theories
 -Q theories LexLatStruct
+-arg -w -arg -notation-overridden
+-arg -w -arg -deprecated-instance-without-locality
+-arg -w -arg -deprecated-hint-without-locality
 
-theories/Order.v
 theories/Basic.v
-theories/Lexicographic.v
 theories/Ordinal.v
-theories/Fix.v
-theories/Lattices.v
-theories/Ord.v
 theories/WfOrdinal.v
+theories/Order/PartialOrder.v
+theories/Order/TotalOrder.v
+theories/Order/Partial/Dual.v
+theories/Order/Partial/Arrow.v
+theories/Order/Partial/Sub.v
+theories/Order/Partial/Prod.v
+theories/Order/Partial/Nat.v
+theories/Order/Map/Monotone.v
+theories/Order/Map/Continuous.v
+theories/Order/CPO.v
+theories/Order/CPO/Sub.v
+theories/Order/CPO/Arrow.v
+theories/Order/CPO/Monotone.v
+theories/Order/Pointed.v
+theories/Order/Lattice.v
+theories/Order/Lattice/Dual.v
+theories/Order/Lattice/Sub.v
+theories/Order/Lattice/Arrow.v
+theories/Order/Lattice/Prod.v
+theories/Order/Lattice/Fix.v
+theories/Order/Fixpoint.v
+theories/Order/Fixpoint/Continuous.v
+theories/Order/Ordinal.v
+theories/Lexicographic.v
